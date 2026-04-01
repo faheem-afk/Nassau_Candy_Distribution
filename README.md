@@ -1,105 +1,216 @@
 <div align="center">
 
-<!-- HEADER BANNER -->
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=1E40AF&height=200&section=header&text=Nassau%20Candy%20Distribution&fontSize=40&fontColor=FFFFFF&fontAlignY=38&desc=Shipping%20Intelligence%20%7C%20Route%20Efficiency%20%7C%20Lead%20Time%20Analytics&descAlignY=58&descSize=16&animation=fadeIn"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,3,12&height=220&section=header&text=Nassau%20Candy%20Distributor&fontSize=42&fontColor=FFFFFF&fontAlignY=36&desc=Shipping%20Route%20Efficiency%20%26%20Lead%20Time%20Analytics&descAlignY=56&descSize=17&animation=fadeIn"/>
 
-<!-- BADGES -->
-![Python](https://img.shields.io/badge/Python-3.11-1E40AF?style=for-the-badge&logo=python&logoColor=white)
+<br/>
+
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Pandas](https://img.shields.io/badge/Pandas-2.0-150458?style=for-the-badge&logo=pandas&logoColor=white)
-![Plotly](https://img.shields.io/badge/Plotly-5.x-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.x-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Complete-16A34A?style=for-the-badge)
-![Domain](https://img.shields.io/badge/Domain-Supply%20Chain-D97706?style=for-the-badge)
+![NumPy](https://img.shields.io/badge/NumPy-1.24-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![SciPy](https://img.shields.io/badge/SciPy-1.11-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
 
 <br/>
 
-> **End-to-end shipping analytics project for Nassau Candy Distribution — identifying route bottlenecks, measuring lead time efficiency, and surfacing actionable insights through a fully interactive Streamlit dashboard.**
+> **A full-cycle supply chain analytics project for Nassau Candy Distributor — from raw messy data to statistically rigorous route efficiency rankings, bottleneck detection, and an interactive Streamlit dashboard.**
 
 <br/>
 
-[📊 View Dashboard](#-dashboard-preview) · [🔍 Methodology](#-methodology) · [📈 Key Findings](#-key-findings) · [🚀 Getting Started](#-getting-started)
+[🔍 Problem Statement](#-problem-statement) &nbsp;·&nbsp; [🏗 Architecture](#-project-structure) &nbsp;·&nbsp; [🧹 Data Wrangling](#-data-wrangling--quality-fixes) &nbsp;·&nbsp; [📐 Methodology](#-analytical-methodology) &nbsp;·&nbsp; [📊 Key Findings](#-key-findings) &nbsp;·&nbsp; [🚀 Quick Start](#-quick-start)
 
 </div>
 
 ---
 
-## 📌 Project Overview
+## 🎯 Problem Statement
 
-Nassau Candy Distribution operates a multi-factory confectionery supply chain shipping across **US regions and states**. This project answers one core business question:
+Nassau Candy Distributor ships confectionery products from **5 factories** across the US to customers in **4 regions** and **multiple states**, using **4 shipping modes**. The business needed answers to:
 
-> **Which shipping routes are most efficient — and which ones are bleeding time and money?**
-
-The analysis spans **8,549 shipments** across **5 factories**, **4 customer regions**, **20 states**, and **4 ship modes** — combining rigorous statistical methods with a production-grade interactive dashboard.
+- Which **factory → region/state routes** are most and least efficient?
+- Which **regions and states** are congestion-prone?
+- Does paying for **expedited shipping** actually deliver faster?
+- How do we make **statistically reliable** comparisons when some routes have only a handful of shipments?
 
 ---
 
-## 🏗️ Project Architecture
+## 🏗 Project Structure
 
 ```
-nassau-candy-shipping-analytics/
+NASSAU CANDY DISTRIBUTOR/
 │
 ├── 📂 data/
-│   ├── raw/                        # Original order data
-│   └── processed/                  # Cleaned & feature-engineered datasets
+│   ├── raw/
+│   │   ├── Nassau Candy Distributor.csv   ← Main orders dataset
+│   │   ├── factories.csv                  ← Factory locations & coordinates
+│   │   └── products_factories.csv         ← Product–factory mapping
+│   └── processed/
+│       └── preprocessed_df.csv            ← Cleaned, merged, feature-enriched
 │
-├── 📂 notebooks/
-│   ├── 01_eda.ipynb                # Exploratory Data Analysis
-│   ├── 02_lead_time_analysis.ipynb # Lead time & variability deep dive
-│   ├── 03_route_efficiency.ipynb   # Route scoring & bottleneck detection
-│   └── 04_statistical_bounds.ipynb # Z/T confidence bounds analysis
+├── 📂 notebook/
+│   └── nassau_shipping.ipynb              ← Full analysis (227 cells)
 │
-├── 📂 src/
-│   ├── preprocessing.py            # Data cleaning pipeline
-│   ├── statistical_bounds.py       # Z-bound & T-bound functions
-│   ├── route_scoring.py            # Efficiency score engine
-│   └── kpi_engine.py              # KPI computation module
-│
-├── 📂 dashboard/
-│   └── shipping_dashboard.py       # Full Streamlit dashboard
-│
-├── requirements.txt
-└── README.md
+└── app.py                                 ← Streamlit dashboard
 ```
 
 ---
 
-## 🔬 Methodology
+## 🧹 Data Wrangling & Quality Fixes
 
-### 1️⃣ Data Preparation & Feature Engineering
+This project had **significant real-world data messiness** — each issue was diagnosed, reasoned about, and fixed deliberately.
 
-Raw order data was cleaned and enriched with computed fields:
+---
+
+### 1. Duplicate `Order ID` Investigation
+
+Duplicate order IDs were not blindly dropped. They were **investigated first**:
 
 ```python
-# Shipping Lead Time
-df['lead_time'] = (df['ship_date'] - df['order_date']).dt.days
+# Each Order ID maps to exactly one product — confirmed via groupby
+x = df.groupby(['Order ID']).agg(count=('Product Name', 'nunique')).reset_index()
+(x['count'] > 1).sum()  # → 0 — no order has multiple products
+```
 
-# Net Revenue after discount
-df['net_revenue'] = df['quantity'] * df['unit_price'] * (1 - df['discount'])
+**Root cause identified:** Same customer re-ordering the same product with a different quantity in the same session (cart updates). The fix was to **aggregate, not drop**:
 
-# Route definition at two granularities
-df['route_region'] = df['factory'] + '  →  ' + df['region_customer']
-df['route_state']  = df['factory'] + '  →  ' + df['state_customer']
+```python
+dframe = df.groupby('Order ID').agg(
+    order_date           = ('Order Date',    'max'),
+    ship_date            = ('Ship Date',     'max'),
+    ship_mode            = ('Ship Mode',     'max'),
+    customer_id          = ('Customer ID',   'max'),
+    state_customer       = ('State/Province','max'),
+    region_customer      = ('Region',        'max'),
+    product_name         = ('Product Name',  'max'),
+    sales                = ('Sales',         'sum'),   # ← aggregated
+    units                = ('Units',         'sum'),   # ← aggregated
+    ...
+).reset_index()
 ```
 
 ---
 
-### 2️⃣ Statistical Confidence Framework
+### 2. Ship Date Corruption — Lead Time Fix ‼️
 
-A key challenge: **small sample sizes make averages unreliable.** This was handled by applying appropriate statistical bounds depending on sample size:
-
-| Sample Size | Method | Why |
-|---|---|---|
-| **≥ 30 (region)** | Z-distribution | CLT applies — normal approximation valid |
-| **≥ 20 (state)** | T-distribution | Small sample — heavier tails, more conservative |
-| **< 20** | Flagged as `weak` | Excluded from bottleneck conclusions |
+The `ship_date` column contained dates **years into the future** — a clear data corruption issue. After investigation:
 
 ```python
-# Confidence classification
-def classify_confidence(n, threshold=30):
-    return 'good' if n >= threshold else 'weak'
+dframe['lead_time'].min(), dframe['lead_time'].max()
+# → Raw values were inflated by ~100x
+```
 
-# Upper bound selection per row
-df['upper_bound'] = df.apply(lambda x:
+**Fix:** Lead times were corrected by dividing by 100 and rounding — capped at the realistic maximum of ~16 days (accounting for transfer logistics):
+
+```python
+dframe['lead_time'] = round(dframe['lead_time'] / 100).astype(int)
+```
+
+---
+
+### 3. Text Standardisation Pipeline
+
+A custom reusable function was built to clean all string columns consistently:
+
+```python
+def preprocessing_names(x):
+    pattern = "[^a-zA-Z0-9 ]"
+    val = re.sub(pattern, "", x).lower()   # remove special characters
+    val = ' '.join(val.split())            # normalise whitespace
+    return val
+
+# Applied across: product_name, factory, city, state, region, country
+for col in ['product_name', 'city_customer', 'state_customer', 'region_customer']:
+    dframe[col] = dframe[col].apply(preprocessing_names)
+```
+
+---
+
+### 4. Division Misclassification Fix
+
+`fizzy lifting drinks` was labelled as `Other` in the products table — but produced by `Sugar Shack` and classified as `Sugar` in the main orders data. Fixed with a targeted correction:
+
+```python
+df_products.loc[df_products['product_name'] == 'fizzy lifting drinks', 'division'] = 'Sugar'
+```
+
+---
+
+### 5. Three-Way Data Merge
+
+The cleaned orders, products, and factories tables were merged into a single analytical dataset:
+
+```python
+# Step 1 — Orders + Products (on product_name + division)
+dframe = dframe.merge(df_products, how='inner', on=['product_name', 'division'])
+
+# Step 2 — Result + Factories (on factory name)
+dframe = dframe.merge(df_factories, how='inner', on='factory')
+
+preprocessed_df.to_csv("preprocessed_df.csv", index=False)
+```
+
+---
+
+## 📐 Analytical Methodology
+
+### Custom Statistical Utilities
+
+Two bespoke functions were written for upper-bound confidence interval estimation:
+
+```python
+from scipy.stats import t
+
+def t_upper_bound(mean, std, n, confidence=0.95):
+    """For small samples — uses t-distribution (heavier tails, more conservative)"""
+    df    = n - 1
+    t_crit = t.ppf((1 + confidence) / 2, df)
+    se    = std / np.sqrt(n)
+    return mean + t_crit * se
+
+def z_upper_bound(mean, std, n):
+    """For larger samples — uses Z-distribution (CLT applies)"""
+    return mean + (1.96 * (std / np.sqrt(n)))
+```
+
+A custom **percentile analysis utility** was also built to inform all threshold decisions:
+
+```python
+def q(x, arr):
+    """Returns count above/below each percentile threshold"""
+    n = len(x)
+    qs = {}
+    for i in arr:
+        threshold = math.ceil(n * i)
+        qs[f"{round(i*100)}%"] = [x[threshold], n - np.ceil(n*i), np.ceil(n*i)]
+    return qs
+
+# Used before every threshold decision — data-driven, not arbitrary
+y = df['total_shipments'].sort_values().tolist()
+q(y, [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+```
+
+---
+
+### Statistical Confidence Framework
+
+> **The problem:** Small sample sizes make averages unreliable. A route with 3 shipments averaging 16 days could just be noise.
+
+Every aggregation level has its own **data-driven threshold** set by inspecting the percentile distribution first:
+
+| Analysis Level | Threshold | Percentile | Confidence Logic |
+|---|---|---|---|
+| Ship Mode × Region | 30 | ~30th | Z-bound if ≥ 30, T-bound otherwise |
+| Ship Mode × State | 12 | ~40th | Z-bound if ≥ 30, T-bound if ≥ 10 |
+| Factory → Region | 18 | ~20th | Z-bound if ≥ 30, T-bound otherwise |
+| Factory → State | 16 | ~20th | Z-bound if ≥ 30, T-bound if ≥ 10 |
+| Congestion (Region) | 35 | ~30th | Direct efficiency scoring |
+| Congestion (State) | 34 | ~35th | Direct efficiency scoring |
+
+**Upper bound** was used (not the mean) to reflect **worst-case scenario planning** — conservative and operationally sound:
+
+```python
+# Applied consistently across all aggregation levels
+df['avg_lead_time'] = df.apply(lambda x:
     round(z_upper_bound(x['avg_lead_time'], x['avg_lead_variability'], x['total_shipments']), 3)
     if x['confidence'] == 'good' else
     round(t_upper_bound(x['avg_lead_time'], x['avg_lead_variability'], x['total_shipments']), 3),
@@ -107,189 +218,158 @@ df['upper_bound'] = df.apply(lambda x:
 )
 ```
 
-> **Why this matters:** A route with 8 shipments averaging 16.9 days looks alarming — but it's noise. Only `confidence = 'good'` routes were used for strategic conclusions.
-
 ---
 
-### 3️⃣ Route Efficiency Scoring
+### Efficiency Score Engineering
 
-Rather than ranking by lead time alone (which ignores reliability), a **normalised composite score** was computed:
+A composite efficiency score combining **speed** and **consistency** — because a fast but unpredictable route is not truly efficient:
 
 ```python
-# Normalise both metrics to [0, 1] scale
-df['norm_lead_time']    = (df['avg_lead_time'] - df['avg_lead_time'].min()) / \
-                          (df['avg_lead_time'].max() - df['avg_lead_time'].min())
+# Normalise lead time to [0, 1]
+df['norm_lead_time'] = round(
+    (df['avg_lead_time'] - df['avg_lead_time'].min()) /
+    (df['avg_lead_time'].max() - df['avg_lead_time'].min()), 3)
 
-df['norm_variability']  = (df['avg_lead_variability'] - df['avg_lead_variability'].min()) / \
-                          (df['avg_lead_variability'].max() - df['avg_lead_variability'].min())
+# Normalise variability to [0, 1]
+df['norm_variability'] = round(
+    (df['avg_lead_variability'] - df['avg_lead_variability'].min()) /
+    (df['avg_lead_variability'].max() - df['avg_lead_variability'].min()), 3)
 
-# Equal-weight efficiency score — lower = better
-df['efficiency_score']  = (0.5 * df['norm_lead_time']) + (0.5 * df['norm_variability'])
-df.sort_values('efficiency_score')
+# Equal-weight composite — lower = more efficient
+df['efficiency_score'] = (0.5 * df['norm_lead_time']) + (0.5 * df['norm_variability'])
 ```
-
-> **Speed + Consistency = Efficiency.** A fast but unpredictable route creates customer disappointment and planning failures. This scoring penalises both.
 
 ---
 
-### 4️⃣ Bottleneck Detection
+### Analysis Dimensions
 
-Routes were flagged as bottlenecks using a dual-condition filter:
+The analysis was structured across **6 dimensions** — each at two granularities:
+
+```
+1. Factory Performance Overview
+2. Ship Mode Performance Overview
+3. Ship Mode × Factory
+4. Ship Mode × Region   ─── }  Best ship method per area
+5. Ship Mode × State    ─── }
+6. Factory → Region     ─── }  Best route per destination
+7. Factory → State      ─── }
+8. Congestion Analysis (Region + State)
+9. Expedited vs Standard Shipping Comparison
+```
+
+---
+
+## 📊 Key Findings
+
+### 🏆 Most Efficient Routes (Factory → Region)
 
 ```python
-bottleneck_threshold_lt  = df['avg_lead_time'].quantile(0.75)     # Top 25% slowest
-bottleneck_threshold_var = df['avg_lead_variability'].quantile(0.75) # Top 25% most variable
-
-bottlenecks = df[
-    (df['avg_lead_time']        >= bottleneck_threshold_lt)  |
-    (df['avg_lead_variability'] >= bottleneck_threshold_var) &
-    (df['confidence'] == 'good')
-]
+factory_region_grouped.sort_values('efficiency_score', ascending=False)[:10]
 ```
 
----
-
-## 📈 Key Findings
-
-### 🚨 Bottleneck Routes (Good Confidence Only)
-
-| Route | Avg Lead Time | Variability | Issue |
-|---|---|---|---|
-| Secret Factory → Gulf | 14.98d 🔴 | 2.90 🔴 | Slow **AND** unpredictable |
-| Secret Factory → Interior | 14.54d 🟠 | 2.98 🔴 | Most variable route |
-| Sugar Shack → Interior | 16.91d 🔴 | 2.19 🟡 | Slowest route (weak confidence) |
-
-### ✅ Most Efficient Routes
-
-| Route | Avg Lead Time | Variability | Efficiency Score |
-|---|---|---|---|
-| **The Other Factory → Atlantic** | 14.53d 🟢 | 2.46 🟢 | ⭐ Best overall |
-| Secret Factory → Pacific | 14.35d 🟢 | 2.63 🟡 | Fastest, less consistent |
-| The Other Factory → Pacific | 14.81d 🟡 | 2.43 🟢 | Most consistent |
-
-### 🏭 Factory-Level Insight
-
-> **Secret Factory is the systemic problem** — it appears across 4 routes and consistently produces the highest lead times and variability. The issue is factory-side, not destination-side. Fixing Secret Factory's dispatch process would improve 4 routes simultaneously.
-
-### 🌍 Regional Congestion
-
-| Region | Avg Lead Time | Variability | Risk Level |
-|---|---|---|---|
-| Gulf | 13.10 🟢 lowest | 2.52 🔴 highest | ⚠️ High — unpredictable |
-| Interior | 13.22 🔴 highest | 2.49 🟠 | ⚠️ High — slow |
-| Pacific | 13.20 🟠 | 2.51 🟠 | ⚠️ High — high volume pressure |
-| Atlantic | 13.22 🔴 | 2.44 🟢 lowest | 🟡 Moderate |
+Best routes combined low average lead time **and** low variability — showing that the most efficient routes are also the most **predictable**.
 
 ---
 
-## 📊 Dashboard Preview
-
-The project includes a **fully interactive Streamlit dashboard** with 6 analytical modules:
-
-| Module | What It Shows |
-|---|---|
-| 🎯 **KPI Cards** | Total shipments, avg lead time, delay frequency, efficiency score, net revenue |
-| 📊 **Route Efficiency** | Sorted bar chart of avg lead time by route + performance leaderboard |
-| 🗺️ **Geographic Map** | US choropleth — lead time & delay % by state |
-| 📦 **Ship Mode Comparison** | Box plot distributions + factory × ship mode breakdown |
-| 🔥 **Route Drill-Down** | Heatmap of route × ship mode + filterable performance table |
-| 📈 **Timelines** | Monthly trend line + lead time distribution histogram |
-
-**Sidebar filters:** Date range · Factory · Region/State toggle · Ship mode · Delay threshold slider · Division
-
-```bash
-# Launch dashboard
-streamlit run dashboard/shipping_dashboard.py
-```
-
----
-
-## 🧠 Technical Highlights
+### 🚨 Bottleneck Routes
 
 ```python
-# ✅ Statistical rigour — Z vs T bounds based on sample size
-# ✅ Noise filtering — weak confidence routes excluded from conclusions
-# ✅ Composite efficiency scoring — not just speed, but speed + consistency
-# ✅ Two-level route granularity — region (threshold: 30) and state (threshold: 20)
-# ✅ Dynamic confidence tagging — good / weak per route
-# ✅ KPI engine — delay frequency, route efficiency score, net revenue
+bottleneck_regions = least_efficient_routes[
+    least_efficient_routes['total_shipments'] >= 35   # high volume = real problem
+].reset_index(drop=True)
 ```
 
-**Key Python patterns used:**
-- `groupby().agg()` with named aggregations
-- `apply()` with conditional lambda for statistical bounds
-- Min-max normalisation for composite scoring
-- `isin()` for cross-dataframe validation
-- `relativedelta` for accurate date arithmetic
-- Dictionary-based dynamic groupby storage
+Routes were flagged as bottlenecks only when they had **both** poor efficiency scores **and** sufficient volume — preventing noise from driving conclusions.
 
 ---
 
-## 🚀 Getting Started
+### 🌍 Congestion-Prone Regions
 
-### Prerequisites
-```bash
-Python 3.11+
+```python
+congested_prone_regions.sort_values('efficiency_score', ascending=True).style.apply(
+    lambda x: ['background-color: lightblue']*len(x) if x['efficiency_score'] <= 0.2 else ['']*len(x),
+    axis=1
+)
 ```
 
-### Installation
-```bash
-# Clone repo
-git clone https://github.com/yourusername/nassau-candy-shipping-analytics.git
-cd nassau-candy-shipping-analytics
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### Requirements
-```txt
-pandas>=2.0
-numpy>=1.24
-plotly>=5.0
-streamlit>=1.28
-python-dateutil>=2.8
-scipy>=1.11
-```
-
-### Run Analysis
-```bash
-# Run notebooks in order
-jupyter notebook notebooks/
-
-# Or launch dashboard directly
-streamlit run dashboard/shipping_dashboard.py
-```
+Regions with efficiency score ≤ 0.20 were highlighted as congestion-prone — combining high lead times with high unpredictability.
 
 ---
 
-## 📐 KPI Definitions
+### ✈️ Expedited vs Standard Shipping
 
-| KPI | Formula | Purpose |
-|---|---|---|
-| **Shipping Lead Time** | `Ship Date − Order Date` | Per-order duration |
-| **Average Lead Time** | `mean(lead_time)` per route | Route speed benchmark |
-| **Lead Time Variability** | `std(lead_time)` per route | Route reliability |
-| **Delay Frequency** | `% shipments > threshold` | Operational risk signal |
-| **Route Efficiency Score** | `0.5 × norm(lead_time) + 0.5 × norm(variability)` | Composite ranking |
-| **Net Revenue** | `Quantity × Unit Price × (1 − Discount)` | True revenue per order |
+```python
+shipping['shipping_category'] = shipping['ship_mode'].apply(
+    lambda x: 'Expedited Shipping' if x in ('First Class', 'Same Day') else 'Standard Shipping'
+)
+
+shipping_grouped = shipping.groupby('shipping_category').agg(
+    total_shipments      = ('total_shipments', 'sum'),
+    avg_lead_time        = ('avg_lead_time',   'mean'),   # ← mean of means
+    avg_lead_variability = ('avg_lead_variability', 'mean'),
+)
+```
+
+Compared side-by-side to determine whether premium shipping modes actually deliver meaningfully better lead times across the distribution network.
 
 ---
 
-## 🛠️ Tools & Stack
+## 🛠 Tech Stack
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white)
-![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
-![SciPy](https://img.shields.io/badge/SciPy-8CAAE6?style=flat-square&logo=scipy&logoColor=white)
-![Plotly](https://img.shields.io/badge/Plotly-3F4F75?style=flat-square&logo=plotly&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
-![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+| Layer | Tools |
+|---|---|
+| **Language** | Python 3.11 |
+| **Data Manipulation** | Pandas, NumPy |
+| **Statistical Analysis** | SciPy (`t.ppf`), custom Z/T bound functions |
+| **Visualisation** | Plotly, Streamlit |
+| **Environment** | Jupyter Notebook, VS Code |
+| **Data Format** | CSV (raw + processed) |
 
 </div>
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# 1. Clone
+git clone https://github.com/yourusername/nassau-candy-shipping.git
+cd nassau-candy-shipping
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run the notebook
+jupyter notebook notebook/nassau_shipping.ipynb
+
+# 4. Launch the dashboard
+streamlit run app.py
+```
+
+**Requirements:**
+```
+pandas>=2.0
+numpy>=1.24
+scipy>=1.11
+plotly>=5.0
+streamlit>=1.28
+```
+
+---
+
+## 💡 What Makes This Project Stand Out
+
+```
+✅ Real data problems — corrupted dates, cart-update duplicates, misclassified divisions
+✅ Every threshold is data-driven — q() utility used before every filter decision
+✅ Statistically rigorous — Z vs T bounds selected by sample size, not hardcoded
+✅ Upper bound CI — worst-case planning, not optimistic averages
+✅ Composite efficiency score — speed + consistency, not just speed
+✅ Six analysis dimensions — factory, ship mode, region, state, routes, congestion
+✅ Production dashboard — fully interactive Streamlit app with live filters
+```
 
 ---
 
@@ -297,21 +377,19 @@ streamlit run dashboard/shipping_dashboard.py
 
 <div align="center">
 
-**Your Name**
-*Data Analyst · Supply Chain Analytics · Python*
+**Faheem Bhat**
+*Data Analyst · Supply Chain · Python*
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/yourprofile)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-1E40AF?style=for-the-badge&logo=firefox&logoColor=white)](https://yourportfolio.com)
+[![Portfolio](https://img.shields.io/badge/Portfolio-View-1E40AF?style=for-the-badge&logo=firefox&logoColor=white)](https://yourportfolio.com)
 
 </div>
 
 ---
 
 <div align="center">
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,3,12&height=100&section=footer&animation=fadeIn"/>
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=1E40AF&height=100&section=footer&animation=fadeIn"/>
-
-*If this project resonates with you, feel free to ⭐ the repo and connect!*
-
+*If this resonates, drop a ⭐ and let's connect!*
 </div>
