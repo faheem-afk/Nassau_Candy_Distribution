@@ -380,9 +380,9 @@ streamlit>=1.28
 **Faheem Bhat**
 *Data Analyst · Supply Chain · Python*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/yourprofile)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
-[![Portfolio](https://img.shields.io/badge/Portfolio-View-1E40AF?style=for-the-badge&logo=firefox&logoColor=white)](https://yourportfolio.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/faheemb)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/faheem-afk)
+[![Portfolio](https://img.shields.io/badge/Portfolio-View-1E40AF?style=for-the-badge&logo=firefox&logoColor=white)](https://faheem-afk.github.io)
 
 </div>
 
