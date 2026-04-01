@@ -4,9 +4,6 @@
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,3,12&height=220&section=header&text=Nassau%20Candy%20Distributor&fontSize=42&fontColor=FFFFFF&fontAlignY=36&desc=Shipping%20Route%20Efficiency%20and%20Lead%20Time%20Analytics&descAlignY=56&descSize=17&animation=fadeIn"/>
 
 
-The only change is `%26` → `and` in the `desc`. That ampersand was terminating the URL early so everything after it was being ignored, causing the image to fail.
-
-
 <br/>
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
