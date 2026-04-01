@@ -1,7 +1,8 @@
 <div align="center">
 <div align="center">
     
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=1E40AF&height=200&section=header&text=Nassau%20Candy%20Distributor&fontSize=40&fontColor=FFFFFF&fontAlignY=38&desc=Shipping%20Route%20Efficiency%20%26%20Lead%20Time%20Analytics&descAlignY=56&descSize=16"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,3,12&height=220&section=header&text=Nassau%20Candy%20Distributor&fontSize=42&fontColor=FFFFFF&fontAlignY=36&desc=Shipping%20Route%20Efficiency%20%26%20Lead%20Time%20Analytics&descAlignY=56&descSize=17&animation=fadeIn"/>
+
 
 <br/>
 
