@@ -498,7 +498,8 @@ with tab1:
         )
         fig.update_layout(**styled_layout(
             height=520, coloraxis_showscale=False,
-            yaxis=dict(tickfont=dict(size=10.5, color="#374151"))))
+            yaxis=dict(tickfont=dict(size=10.5, color="#374151"), automargin=True),
+            margin=dict(l=10, r=24, t=56, b=40)))
         fig.update_traces(marker_line_width=0)
         st.plotly_chart(fig, use_container_width=True, theme=None)
 
@@ -605,8 +606,9 @@ with tab2:
     fig_region.update_layout(**styled_layout(
         height=360, showlegend=False,
         title=dict(text="Avg Lead Time & Delay Rate by Region"),
-        yaxis=dict(title=dict(text="Avg Lead Time (days)")),
-        xaxis=dict(title=dict(text="")),
+        yaxis=dict(title=dict(text="Avg Lead Time (days)"), automargin=True),
+        xaxis=dict(title=dict(text=""), automargin=True),
+        margin=dict(l=60, r=24, t=56, b=60),
     ))
     st.plotly_chart(fig_region, use_container_width=True, theme=None)
 
@@ -642,7 +644,7 @@ with tab3:
             ))
         fig_ship.update_layout(**styled_layout(
             height=400, title="Lead Time by Shipping Method",
-            yaxis=dict(title=dict(text="Avg Lead Time (days)")),
+            yaxis=dict(title=dict(text="Avg Lead Time (days)"), automargin=True),
             xaxis=dict(title=dict(text="")),
         ))
         st.plotly_chart(fig_ship, use_container_width=True, theme=None)
@@ -679,7 +681,7 @@ with tab3:
             fig_heat.update_layout(**styled_layout(
                 height=380, title="Ship Mode × Factory Heatmap",
                 xaxis=dict(tickfont=dict(size=11, color="#6B7280"), side='bottom'),
-                yaxis=dict(tickfont=dict(size=11, color="#6B7280")),
+                yaxis=dict(tickfont=dict(size=11, color="#6B7280"), automargin=True),
                 coloraxis_colorbar=dict(len=0.6, thickness=14, tickfont=dict(size=10)),
             ))
             fig_heat.update_traces(textfont=dict(size=11, color="#374151"))
