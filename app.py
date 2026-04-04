@@ -727,7 +727,7 @@ with tab4:
             st.plotly_chart(fig_hist, use_container_width=True)
 
         with trend_col:
-            trend = sf.set_index('order_date').resample('M')['lead_time'].mean().dropna().reset_index()
+            trend = sf.set_index('order_date').resample('ME')['lead_time'].mean().dropna().reset_index()
             trend.columns = ['month', 'avg_lead_time']
             if len(trend) > 1:
                 fig_trend = px.area(
