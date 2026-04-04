@@ -330,7 +330,7 @@ STATE_MAP = {
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv("preprocessed_df.csv")
+    df = pd.read_csv("data/processed/preprocessed_df.csv")
     df['order_date'] = pd.to_datetime(df['order_date'])
     df['ship_date'] = pd.to_datetime(df['ship_date'])
     return df
