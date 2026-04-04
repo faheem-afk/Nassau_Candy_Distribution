@@ -139,12 +139,41 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMultiSelect label,
     section[data-testid="stSidebar"] .stDateInput label,
     section[data-testid="stSidebar"] .stSlider label,
-    section[data-testid="stSidebar"] .stSelectbox label {
+    section[data-testid="stSidebar"] .stSelectbox label,
+    section[data-testid="stSidebar"] [data-testid="stWidgetLabel"],
+    section[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
         font-size: 0.78rem !important;
         font-weight: 600 !important;
         text-transform: uppercase;
         letter-spacing: 0.06em;
         color: #6B7280 !important;
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    /* ── multiselect tags ── */
+    .stMultiSelect [data-baseweb="tag"] {
+        background-color: #EEF2FF !important;
+        border: 1px solid #C7D2FE !important;
+        border-radius: 6px !important;
+    }
+    .stMultiSelect [data-baseweb="tag"] span[data-testid="stMultiSelectTag"] span,
+    .stMultiSelect [data-baseweb="tag"] span {
+        color: #4338CA !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+    .stMultiSelect [data-baseweb="tag"] [role="presentation"] svg {
+        fill: #6366F1 !important;
+    }
+
+    /* ── slider track & thumb ── */
+    .stSlider [data-baseweb="slider"] [role="slider"] {
+        background: #6366F1 !important;
+        border-color: #6366F1 !important;
+    }
+    .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] ~ div > div > div {
+        background: #6366F1 !important;
     }
 
     /* ── tabs ── */
