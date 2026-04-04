@@ -196,7 +196,7 @@ st.markdown("""
     hr { border: none; border-top: 1.5px solid #F3F4F6; margin: 1.5rem 0; }
 
     /* ── expander ── */
-    .streamlit-expanderHeader {
+    [data-testid="stExpanderHeader"], .streamlit-expanderHeader {
         font-weight: 600;
         font-size: 0.9rem;
         color: #374151;
@@ -373,7 +373,7 @@ with st.sidebar:
         "Lead-Time Threshold (days)",
         min_value=int(df['lead_time'].min()),
         max_value=max_lead,
-        value=int(df['lead_time'].quantile(0.75)),
+        value=int(df['lead_time'].quantile(0.50)),
         help="Shipments exceeding this are flagged as delayed",
     )
 
@@ -471,7 +471,7 @@ with tab1:
             height=520, coloraxis_showscale=False,
             yaxis=dict(tickfont=dict(size=10.5, color="#374151"))))
         fig.update_traces(marker_line_width=0)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, theme=None)
 
     with col_table:
         st.markdown(f"""
@@ -545,7 +545,7 @@ with tab2:
             coloraxis_colorbar=dict(title=dict(text=clabel[geo_metric], font=dict(size=11)),
                                      tickfont=dict(size=10), len=0.5, thickness=14),
         ))
-        st.plotly_chart(fig_map, use_container_width=True)
+        st.plotly_chart(fig_map, use_container_width=True, theme=None)
 
     # Regional bottleneck
     st.markdown("<div style='height:0.75rem'></div>", unsafe_allow_html=True)
@@ -579,7 +579,7 @@ with tab2:
         yaxis=dict(title=dict(text="Avg Lead Time (days)")),
         xaxis=dict(title=dict(text="")),
     ))
-    st.plotly_chart(fig_region, use_container_width=True)
+    st.plotly_chart(fig_region, use_container_width=True, theme=None)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # TAB 3 — SHIP MODE COMPARISON
@@ -589,9 +589,8 @@ with tab3:
     st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 
     ship_perf = overall_shipping_performance(filtered)
-    delay_by_mode = filtered.groupby('ship_mode').apply(
-        lambda x: round((x['lead_time'] > lead_threshold).mean() * 100, 1),
-        include_groups=False,
+    delay_by_mode = filtered.groupby('ship_mode')['lead_time'].apply(
+        lambda x: round((x > lead_threshold).mean() * 100, 1),
     ).reset_index(name='delay_pct')
     ship_perf = ship_perf.merge(delay_by_mode, on='ship_mode', how='left')
 
@@ -617,7 +616,7 @@ with tab3:
             yaxis=dict(title=dict(text="Avg Lead Time (days)")),
             xaxis=dict(title=dict(text="")),
         ))
-        st.plotly_chart(fig_ship, use_container_width=True)
+        st.plotly_chart(fig_ship, use_container_width=True, theme=None)
 
     with c2:
         st.markdown("""
@@ -655,7 +654,7 @@ with tab3:
                 coloraxis_colorbar=dict(len=0.6, thickness=14, tickfont=dict(size=10)),
             ))
             fig_heat.update_traces(textfont=dict(size=11, color="#374151"))
-            st.plotly_chart(fig_heat, use_container_width=True)
+            st.plotly_chart(fig_heat, use_container_width=True, theme=None)
         except Exception:
             st.info("Not enough data for heatmap.")
 
@@ -672,7 +671,7 @@ with tab3:
             fig_sr.update_layout(**styled_layout(
                 height=380, legend=dict(orientation='h', y=-0.18, x=0.5, xanchor='center')))
             fig_sr.update_traces(marker_line_width=0, marker_cornerradius=4)
-            st.plotly_chart(fig_sr, use_container_width=True)
+            st.plotly_chart(fig_sr, use_container_width=True, theme=None)
         except Exception:
             st.info("Not enough data.")
 
@@ -724,7 +723,7 @@ with tab4:
                 height=370, legend=dict(orientation='h', y=-0.2, x=0.5, xanchor='center')))
 
             fig_hist.update_traces(marker_line_width=0)
-            st.plotly_chart(fig_hist, use_container_width=True)
+            st.plotly_chart(fig_hist, use_container_width=True, theme=None)
 
         with trend_col:
             trend = sf.set_index('order_date').resample('ME')['lead_time'].mean().dropna().reset_index()
@@ -738,7 +737,7 @@ with tab4:
                 )
                 fig_trend.update_traces(line=dict(width=2.5), fillcolor="rgba(99,102,241,0.08)")
                 fig_trend.update_layout(**styled_layout(height=370))
-                st.plotly_chart(fig_trend, use_container_width=True)
+                st.plotly_chart(fig_trend, use_container_width=True, theme=None)
             else:
                 st.info("Not enough monthly data for trend chart.")
 
